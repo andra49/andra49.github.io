@@ -50,4 +50,4 @@ setTimeout(function () {
         	normal: 'line'
         }
     });
-}, 10);
+}, 1000);
