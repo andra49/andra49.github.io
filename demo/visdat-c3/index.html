@@ -1,16 +1,44 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="datavizApp">
 <head>
 	<!-- Load c3.css -->
-	<link href="style/c3.css" rel="stylesheet" type="text/css">
+	<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
+	<link href="css/c3.css" rel="stylesheet" type="text/css">
+	<link href="css/bootstrap.min.css" rel="stylesheet" type="text/css">
+	<link href="css/flag-icon.min.css" rel="stylesheet" type="text/css">
+	<link href="chart.css" rel="stylesheet" type="text/css">
 
 	<!-- Load d3.js and c3.js -->
 	<script src="lib/d3.min.js" charset="utf-8"></script>
 	<script src="lib/c3.min.js"></script>
 	<title>C3.js Demo</title>
 </head>
-<body>
-	<div id="chart"></div>
+<body ng-controller="mainController" ng-init="initChart()">
+<div class="col-md-12">
+	<div class="row">
+		<div class="col-md-12">
+			<div class="page-header">
+				<h1>The 2008 Financial Crisis <small>and its impact on our live</small></h1>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-2">
+		<h3>Select Country</h3>
+		<div class="list-group" ng-repeat="data in dataset">
+		  <a href="#" class="list-group-item" ng-click="loadChart($index)" ng-class="data.class">
+		    <span class="flag-icon" ng-class="'flag-icon-'+data.shortcode"></span>&nbsp;{{data.name}}
+		  </a>
+		</div>
+	</div>
+	<div class="col-md-7">
+		<div id="chart"></div>
+	</div>
+	<div class="col-md-3 narrative-text">
+		<h3>{{dataset[selected].name}}</h3>
+		{{dataset[selected].text}}
+	</div>
+</div>
 </body>
-	<script src="chart.js"></script>
+	<script src="lib/angular.min.js" charset="utf-8"></script>
+	<script src="script.js"></script>
 </html>

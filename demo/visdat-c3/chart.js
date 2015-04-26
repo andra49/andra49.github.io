@@ -1,53 +1,59 @@
 var chart = c3.generate({
     data: {
-        url: 'dataset.csv',	
-        xs: {
-        	Asia: 'asia_mcd',
-        	SouthAmerica: 'sthAm_mcd',
-        	Africa: 'africa_mcd',
-        	Europe: 'europe_mcd',
-        	UnitedStates: 'us_mcd',
-        	Australia: 'aus_mcd'
-        },
-        type: 'scatter'
+        x: 'x',
+		url: 'japan.csv',
+        axes: {
+        	PeopleOpinion: 'y2',
+        	FutureOpinion: 'y2'
+        }
     },
     axis: {
         x: {
-            label: 'McDonalds Price',
+            type: 'timeseries',
             tick: {
-            	format: d3.format("$,"),
-                fit: false
+                format: '%Y'
             }
         },
         y: {
-            label: 'Local Meal Price',
-	        tick: {
-	          format: d3.format("$,") // ADD
-	        }
-        }
+        	label: {
+        	  	text: 'Percent (%)',
+          		position: 'outer-middle'
+       		}
+      	},
+      	y2: {
+      		show: true,
+      		label: {
+        	  	text: 'Percent of People (%)',
+          		position: 'outer-middle'
+       		}
+      	}
     },
-    zoom: {
-        enabled: true
+    size: {
+        height: 480
     },
     point: {
-    	r: 5
+        show: false
     },
-    legend: {
-	  	hide: 'normal'
-	}
-});
-
-setTimeout(function () {
-    chart.load({
-        xs: {
-        	normal: 'normal_x'
-        },
-        columns: [
-    		['normal', 3, 9],
-    		['normal_x', 3, 9]
-    	],
-        types: {
-        	normal: 'line'
+    grid: {
+        x: {
+            lines: [
+            	{value: '2007-08-01', class: 'timeline', text: 'Start of liquidity crisis'},
+            	{value: '2008-09-01', class: 'timeline', text: 'Lehman Brother collapses'},
+            	{value: '2009-02-01', class: 'timeline', text: 'Recovery Act enacted'},
+            	{value: '2010-09-01', class: 'timeline', text: 'Small Business Job Act enacted'}
+            ]
         }
-    });
-}, 1000);
+    },
+    regions: [
+        {axis: 'y', start: -100, end: 0, class: 'negative-percentage'},
+        {axis: 'y', start: 0, class: 'positive-percentage'}
+    ],
+    tooltip: {
+        grouped: false, // Default true
+        format: {
+            title: d3.time.format('%Y'),
+            value: function(d) { return d + "%"; }
+//            value: d3.format(',') // apply this format to both y and y2
+        }
+    }
+});
