@@ -1,47 +1,20 @@
 var datavizApp = angular.module('datavizApp', []);
 
 // create the controller and inject Angular's $scope
-datavizApp.controller('mainController', function($scope) {
+datavizApp.controller('mainController', function($scope, $http) {
 	$scope.chart = null;
-	$scope.dataset = [{
-		name: 'United States',
-		shortcode: 'us',
-		filename: 'us.csv',
-		class: 'active',
-		timeline: [
-        	{value: '2007-08-01', class: 'timeline', text: 'Start of liquidity crisis'},
-        	{value: '2008-09-01', class: 'timeline', text: 'Lehman Brother collapses'},
-        	{value: '2009-02-01', class: 'timeline', text: 'Recovery Act enacted'},
-        	{value: '2010-09-01', class: 'timeline', text: 'Small Business Job Act enacted'}
-		],
-		text: 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat facer possim assum. Typi non habent claritatem insitam; est usus legentis in iis qui facit eorum claritatem. Investigationes demonstraverunt lectores legere me lius quod ii legunt saepius. Claritas est etiam processus dynamicus, qui sequitur mutationem consuetudium lectorum.'
-	}, {
-		name: 'Germany',
-		shortcode: 'de',
-		filename: 'germany.csv',
-		class: null,
-		timeline: [],
-		text: 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat facer possim assum. Typi non habent claritatem insitam; est usus legentis in iis qui facit eorum claritatem. Investigationes demonstraverunt lectores legere me lius quod ii legunt saepius. Claritas est etiam processus dynamicus, qui sequitur mutationem consuetudium lectorum.'
-	}, {
-		name: 'Japan',
-		shortcode: 'jp',
-		filename: 'japan.csv',
-		class: null,
-		timeline: [
-			{value: '2008-11-17', class: 'timeline', text: 'Japan economy slides into recession'},
-			{value: '2009-01-13', class: 'timeline', text: 'Japan experiencing a 42% drop in trade'},	
-			{value: '2009-09-01', class: 'timeline', text: 'Employment Adjustment Subsidy Programme'},
-		],
-		text: 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat facer possim assum. Typi non habent claritatem insitam; est usus legentis in iis qui facit eorum claritatem. Investigationes demonstraverunt lectores legere me lius quod ii legunt saepius. Claritas est etiam processus dynamicus, qui sequitur mutationem consuetudium lectorum.'
-	}];
+	$scope.dataset = [];
+	$scope.parameter = [];
+	$scope.parameterColumn = [];
 	$scope.selected = 0;
+	$scope.dataHeader = 0;
 
     // create a message to display in our view
     $scope.initChart = function() {
 	    $scope.chart = c3.generate({
 		    data: {
 		        x: 'x',
-				url: 'us.csv',
+				url: $scope.dataset[0].filename,
 		        axes: {
 		        	PeopleOpinion: 'y2',
 		        	FutureOpinion: 'y2'
@@ -76,12 +49,7 @@ datavizApp.controller('mainController', function($scope) {
 		    },
 		    grid: {
 		        x: {
-		            lines: [
-		            	{value: '2007-08-01', class: 'timeline', text: 'Start of liquidity crisis'},
-		            	{value: '2008-09-01', class: 'timeline', text: 'Lehman Brother collapses'},
-		            	{value: '2009-02-01', class: 'timeline', text: 'Recovery Act enacted'},
-		            	{value: '2010-09-01', class: 'timeline', text: 'Small Business Job Act enacted'}
-		            ]
+		            lines: $scope.dataset[0].timeline
 		        }
 		    },
 		    regions: [
@@ -89,28 +57,125 @@ datavizApp.controller('mainController', function($scope) {
 		        {axis: 'y', start: 0, class: 'positive-percentage'}
 		    ],
 		    tooltip: {
-		        grouped: false, // Default true
+		        grouped: false,
 		        format: {
 		            title: d3.time.format('%Y'),
 		            value: function(d) { return d + "%"; }
-		//            value: d3.format(',') // apply this format to both y and y2
 		        }
 		    }
 		});
 	}
 
 	$scope.loadChart = function(id) {
+		// get all parameters to remove
+		var remove = [];
+		for (var i = 0; i < $scope.parameterColumn[0].column.length; i++) {
+			remove.push($scope.parameterColumn[0].column[i][0]);
+		};
+		console.log(remove);
+
 		$scope.chart.load({
-			url: $scope.dataset[id].filename
+			url: $scope.dataset[id].filename,
+			unload: remove
 		});
 		$scope.chart.xgrids($scope.dataset[id].timeline);
-		for (var i = 0; i < $scope.dataset.length; i++) {
-			if (i == id) {
-				$scope.dataset[i].class = 'active';
-			} else {
+		enableSelection(id, true);
+		$scope.selected = id;
+	}
+
+	$scope.loadParameter = function(id) {
+		$scope.chart.load({
+			columns: $scope.parameterColumn[id].column,
+			unload: ['GDP Growth', 'Unemployment', 'Inflation', 'PeopleOpinion', 'FutureOpinion']
+		});
+		$scope.chart.xgrids([]);
+		enableSelection(id, false);
+	}
+
+	$scope.initData = function() {
+		$http.get("metadata.json")
+    		.success(function(response) {
+    			$scope.dataset = response;
+    			$scope.initChart();
+    			$scope.analyzeParameter(0);
+    		})
+    		.error(function(response) {
+    			console.log("Metadata file not found");
+    		});
+	}
+
+	$scope.analyzeParameter = function(id) {
+		if (id < $scope.dataset.length) {
+			$http.get($scope.dataset[id].filename)
+				.success(function(response) {
+					$scope.parameter.push({name: $scope.dataset[id].name});
+					// parse csv data
+					var dataLines = response.split(/\r\n|\n/);
+					var headers = dataLines[0].split(',');
+
+					$scope.parameter[id].header = headers;
+					$scope.dataHeader = headers;
+
+					var lines = [];
+
+					for (var i = 1; i < dataLines.length; i++) {
+						var data = dataLines[i].split(',');
+						if (data.length == headers.length) {
+							lines.push(data);
+						}
+					};
+
+					$scope.parameter[id].column = lines;
+					//console.log($scope.parameter);
+
+					$scope.analyzeParameter(id+1);
+
+				})
+				.error(function(response) {
+					console.log("Error when analyzing data");
+				});
+		} else {
+			$scope.parameterColumn = [];
+			for (var i = 0; i < $scope.dataHeader.length; i++) { // parameters
+				$scope.parameterColumn.push({name: $scope.dataHeader[i], class: null});
+				var column = [];
+				for (var j = 0; j < $scope.parameter.length; j++) { //countries
+					column.push([$scope.parameter[j].name]);
+					for (var k = 0; k < $scope.parameter[j].column.length; k++) {
+						column[j].push($scope.parameter[j].column[k][i]);
+					}
+				}
+				$scope.parameterColumn[i].column = column;
+			}
+			// remove date parameter
+			$scope.parameterColumn.splice(0, 1);
+			console.log($scope.parameterColumn);
+		}
+	}
+
+	var enableSelection = function(id, data) {
+		if (data) {
+			for (var i = 0; i < $scope.dataset.length; i++) {
+				if (i == id) {
+					$scope.dataset[i].class = 'active';
+				} else {
+					$scope.dataset[i].class = null;
+				}
+			}
+			for (var i = 0; i < $scope.parameterColumn.length; i++) {
+				$scope.parameterColumn[i].class = null;
+			}
+		} else {
+			for (var i = 0; i < $scope.parameterColumn.length; i++) {
+				if (i == id) {
+					$scope.parameterColumn[i].class = 'active';
+				} else {
+					$scope.parameterColumn[i].class = null;
+				}
+			}
+			for (var i = 0; i < $scope.dataset.length; i++) {
 				$scope.dataset[i].class = null;
 			}
-		};
-		$scope.selected = id;
+		}
 	}
 });
