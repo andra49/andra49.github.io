@@ -6,7 +6,9 @@
 	<link href="css/c3.css" rel="stylesheet" type="text/css">
 	<link href="css/bootstrap.min.css" rel="stylesheet" type="text/css">
 	<link href="css/flag-icon.min.css" rel="stylesheet" type="text/css">
-	<link href="chart.css" rel="stylesheet" type="text/css">
+	<link href="css/global.css" rel="stylesheet" type="text/css">
+	<link href="css/listgroup.horizontal.css" rel="stylesheet" type="text/css">
+	<link href="css/chart.css" rel="stylesheet" type="text/css">
 
 	<!-- Load d3.js and c3.js -->
 	<script src="lib/d3.min.js" charset="utf-8"></script>
@@ -18,33 +20,36 @@
 	<div class="row">
 		<div class="col-md-12">
 			<div class="page-header">
-				<h1>The 2008 Financial Crisis <small>and its impact on our live</small></h1>
+				<h1>The 2008 Great Recession <small>and its after-impact</small></h1>
 			</div>
 		</div>
 	</div>
-	<div class="col-md-2">
-		<h3>Select Country</h3>
-		<div class="list-group">
-		  <a href="#" class="list-group-item" ng-click="loadChart($index)" ng-class="data.class" ng-repeat="data in dataset">
-		    <span class="flag-icon" ng-class="'flag-icon-'+data.shortcode"></span>&nbsp;{{data.name}}
-		  </a>
-		</div>
-		<hr>
-		<h3>Select Parameter</h3>
-		<div class="list-group">
-		  <a href="#" class="list-group-item" ng-click="loadParameter($index)" ng-class="parameter.class" ng-repeat="parameter in parameterColumn">
-		    {{parameter.name}}
-		  </a>
-		</div>
-	</div>
-	<div class="col-md-7">
-		<div id="chart"></div>
-		
-	</div>
 	<div class="col-md-3 narrative-text">
-		<h3>{{dataset[selected].name}}</h3>
-		{{dataset[selected].text}}
+		The Great Recession was the general economic decline observed in world markets around the end of the first decade of the 21st century. The International Monetary Fund concluded that it was the worst global recession since World War II. The Great Recession applies to both the United States recession and the ensuing global recession. The economic incident began when the United States housing market went from boom to bust and large amounts of mortgage-backed securities and derivatives lost significant value. It was related as the cause of the United States financial crisis of 2007-2008 and subprime mortgage crisis of 2007-2009.
 	</div>
+	<div class="col-md-9">
+		<div class="row">
+			<div class="col-md-offset-1 col-md-1 h5">By country</div>
+			<div class="col-md-4 list-group-horizontal">
+			  <a href="#" class="list-group-item tooltips buttons" ng-click="loadChart($index)" ng-class="data.class" ng-repeat="data in dataset">
+			    <span class="flag-icon" ng-class="'flag-icon-'+data.shortcode"></span><span1>{{data.name}}</span1>
+			  </a>
+			</div>
+			<div class="col-md-offset-1 col-md-1 h5">By criterion</div>
+			<div class="col-md-4 list-group-horizontal">
+			  <a href="#" class="list-group-item tooltips buttons" ng-click="loadParameter($index)" ng-class="parameter.class" ng-repeat="parameter in parameterColumn">
+			    <img src="icon/{{parameter.name}}.png" style="margin:-8px -4px;width:24px;height:24px"><span1>{{parameter.name}}</span1>
+			  </a>
+			</div>
+			<hr>
+		</div>
+		<div class="row">
+			<div id="chart"></div>
+		</div>
+	</div>
+</div>
+<div class="col-md-offset-2 col-md-8 dataviz-c3 page-footer">
+	By: Evan Budianto, Muhammad Nassirudin, Renusa Andra Prayogo, dan Arini Hasianna Sirait.
 </div>
 </body>
 	<script src="lib/angular.min.js" charset="utf-8"></script>
